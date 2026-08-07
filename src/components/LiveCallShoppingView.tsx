@@ -86,12 +86,12 @@ export const LiveCallShoppingView: React.FC<LiveCallShoppingViewProps> = ({
     },
     {
       id: 'sug-2',
-      name: 'Everfine Pure Sunflower Oil',
+      name: 'Sunfoil Pure Sunflower Oil',
       category: 'Cooking & Oils' as ProductCategory,
       priceUSD: 4.12,
       originalPriceUSD: 5.50,
       unit: '2 Litre Bottle',
-      image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=400',
+      image: '/images/sunfoil_oil.jpg',
       tag: 'POPULAR',
       discount: 'SAVE £1.38',
       deliveryInfo: 'Same-day Dispatch • Mazai Makuru',
@@ -104,7 +104,7 @@ export const LiveCallShoppingView: React.FC<LiveCallShoppingViewProps> = ({
       priceUSD: 2.85,
       originalPriceUSD: 3.80,
       unit: '2kg Bag',
-      image: 'https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&q=80&w=400',
+      image: '/images/huletts_sugar.jpg',
       tag: 'DAILY ESSENTIAL',
       discount: 'SAVE £0.95',
       deliveryInfo: 'Harare Central Depot • In Stock',
@@ -117,7 +117,7 @@ export const LiveCallShoppingView: React.FC<LiveCallShoppingViewProps> = ({
       priceUSD: 2.10,
       originalPriceUSD: 2.80,
       unit: '2L Bottle',
-      image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&q=80&w=400',
+      image: '/images/clover_milk.jpg',
       tag: 'FRESH DAIRY',
       discount: 'SAVE £0.70',
       deliveryInfo: 'Cold-chain Express • Local Farm',
@@ -391,7 +391,7 @@ export const LiveCallShoppingView: React.FC<LiveCallShoppingViewProps> = ({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-nowrap overflow-hidden">
               <h1 className="font-black text-xs sm:text-base text-white tracking-wide whitespace-nowrap truncate max-w-[150px] xs:max-w-[200px] sm:max-w-none">
-                Zikishop Live Shopping Call
+                PnP Live Shopping Call
               </h1>
               <span className="bg-emerald-500/20 text-emerald-300 text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2.5 py-0.5 rounded-full border border-emerald-400/40 uppercase tracking-wider flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />

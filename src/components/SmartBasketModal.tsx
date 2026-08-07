@@ -136,7 +136,7 @@ const SMART_PRODUCTS_DECK: SmartBasketItem[] = [
       fulfillmentTag: 'Nationwide Zim',
       inStock: true,
       featured: true,
-      image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=500&q=80',
+      image: '/images/mazoe_orange_crush.jpg',
     },
     badge: 'ZIM HERITAGE',
     saveText: 'SAVE $0.70',
@@ -161,7 +161,7 @@ const SMART_PRODUCTS_DECK: SmartBasketItem[] = [
       fulfillmentTag: 'Nationwide Zim',
       inStock: true,
       featured: true,
-      image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=500&q=80',
+      image: '/images/tanganda_tea.jpg',
     },
     badge: 'TOP SELLER',
     saveText: 'SAVE $0.40',
@@ -513,8 +513,8 @@ export const SmartBasketModal: React.FC<SmartBasketModalProps> = ({
 
                   {/* Top Badges Row */}
                   <div className="flex items-center justify-between gap-2 z-10">
-                    <span className="bg-[#ffb81c] text-[#1a115e] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-2xs flex items-center gap-1">
-                      <RotateCcw className="w-3 h-3 text-[#1a115e]" /> {currentItem.badge}
+                    <span className="bg-[#FFB81C] text-[#002D62] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-2xs flex items-center gap-1">
+                      <RotateCcw className="w-3 h-3 text-[#002D62]" /> {currentItem.badge}
                     </span>
 
                     <button
@@ -555,7 +555,7 @@ export const SmartBasketModal: React.FC<SmartBasketModalProps> = ({
                   {/* Price & Title Details */}
                   <div className="space-y-1 z-10">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-black text-[#1a115e] tracking-tight">
+                      <span className="text-2xl sm:text-3xl font-black text-[#002D62] tracking-tight">
                         {formatPrice(currentItem.product.priceUSD, currency)}
                       </span>
                       <span className="text-xs text-stone-400 line-through font-bold">
@@ -656,7 +656,7 @@ export const SmartBasketModal: React.FC<SmartBasketModalProps> = ({
                   onClose();
                   onOpenCart();
                 }}
-                className="bg-gradient-to-r from-[#ffb81c] to-amber-400 hover:from-amber-400 hover:to-amber-300 text-[#1a115e] px-3.5 py-1.5 rounded-xl font-extrabold text-xs shadow-md transition-all active:scale-95 flex items-center gap-1"
+                className="bg-gradient-to-r from-[#FFB81C] to-amber-400 hover:from-amber-400 hover:to-amber-300 text-[#002D62] px-3.5 py-1.5 rounded-xl font-extrabold text-xs shadow-md transition-all active:scale-95 flex items-center gap-1 cursor-pointer"
               >
                 <span>View Cart</span>
               </button>
@@ -677,7 +677,7 @@ export const SmartBasketModal: React.FC<SmartBasketModalProps> = ({
             {/* Expanded Header */}
             <div className="p-4 bg-stone-900/90 border-b border-cyan-500/20 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="bg-[#ffb81c] text-[#1a115e] text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
+                <span className="bg-[#FFB81C] text-[#002D62] text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
                   {expandedItem.badge}
                 </span>
                 <span className="text-xs text-cyan-300 font-extrabold">Full Product Specifications</span>

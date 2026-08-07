@@ -162,7 +162,7 @@ async function startServer() {
 
   // REST API Routes
   app.get('/api/health', (req: Request, res: Response) => {
-    res.json({ status: 'ok', service: 'GreenCart Diaspora Engine', timestamp: new Date().toISOString() });
+    res.json({ status: 'ok', service: 'PnP Diaspora Engine', timestamp: new Date().toISOString() });
   });
 
   app.get('/api/products', (req: Request, res: Response) => {
@@ -249,7 +249,7 @@ async function startServer() {
       });
 
       const systemInstruction = `
-You are GreenCart's Multilingual African Voice AI Shopping Assistant for South Africa and Zimbabwe.
+You are PnP's Multilingual African Voice AI Shopping Assistant for South Africa and Zimbabwe.
 You understand English, Shona (chiShona), Ndebele (siNdebele), Zulu (isiZulu), Xhosa, Tswana, and Sesotho.
 
 Your task is to analyze user spoken or written grocery orders, which often contain code-switched or colloquial terms.
@@ -513,7 +513,7 @@ Response Guidelines:
         .map(item => `• ${item.quantity}x ${item.product.name} ($${(item.product.priceUSD * item.quantity).toFixed(2)})`)
         .join('\n');
 
-      const replyText = `🛒 *GreenCart Family Cart Updated!*\n\n*Current Shared Items:*\n${itemsSummaryList || 'Cart is empty'}\n\n*Total:* $${totalUSD.toFixed(2)} USD (ZWG ${totalZWG})\n*Delivery:* Harare Express & Bulawayo Depot\n\nReply *1* to Checkout via EcoCash / Mukuru.\nReply *LIST* to view options.`;
+      const replyText = `🛒 *PnP Family Cart Updated!*\n\n*Current Shared Items:*\n${itemsSummaryList || 'Cart is empty'}\n\n*Total:* $${totalUSD.toFixed(2)} USD (ZWG ${totalZWG})\n*Delivery:* Harare Express & Bulawayo Depot\n\nReply *1* to Checkout via EcoCash / Mukuru.\nReply *LIST* to view options.`;
 
       // 5. Store message log
       const waMsg: WhatsAppMessage = {
@@ -689,7 +689,7 @@ Return a JSON object with:
       const { paymentMethod = 'EcoCash', payerMemberId = 'mem-1', deliveryAddress } = req.body;
       const totalUSD = currentCart.reduce((sum, item) => sum + item.product.priceUSD * item.quantity, 0);
 
-      const orderId = `ZIKI-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderId = `PNP-${Math.floor(100000 + Math.random() * 900000)}`;
       const voucherCode = `VOUCH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
       const orderReceipt = {
@@ -787,6 +787,9 @@ Return JSON with:
     }
   });
 
+  // Static files from public directory
+  app.use(express.static(path.join(process.cwd(), 'public')));
+
   // Vite Middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -803,7 +806,7 @@ Return JSON with:
   }
 
   httpServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`[GreenCart Server] Running on http://0.0.0.0:${PORT}`);
+    console.log(`[PnP Server] Running on http://0.0.0.0:${PORT}`);
   });
 }
 

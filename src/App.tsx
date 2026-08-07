@@ -64,7 +64,7 @@ export default function App() {
 
   // Real-Time Notification Toast
   const [toastMessage, setToastMessage] = useState<string | null>(
-    '🟢 Connected live to Zikishop Socket.io & WhatsApp Engine'
+    '🟢 Connected live to PnP Socket.io & WhatsApp Engine'
   );
 
   useEffect(() => {
@@ -75,24 +75,41 @@ export default function App() {
 
   // Fetch initial cart from backend REST API
   useEffect(() => {
+    let isMounted = true;
     const fetchInitialData = async () => {
       try {
         const res = await fetch('/api/cart');
+        if (!res.ok) return;
         const data = await res.json();
-        if (data.cart) setCart(data.cart);
-        if (data.members) setMembers(data.members);
+        if (isMounted && data) {
+          if (data.cart) setCart(data.cart);
+          if (data.members) setMembers(data.members);
+        }
       } catch (err) {
-        console.warn('Initial REST cart fetch fallback:', err);
+        // Quiet fallback to default local state
       }
     };
     fetchInitialData();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Socket.io Real-Time Synchronization
   useEffect(() => {
-    let socket: Socket;
+    let socket: Socket | null = null;
     try {
-      socket = io();
+      socket = io({
+        transports: ['polling'], // Use polling to avoid websocket proxy disconnects in preview sandbox
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 2000,
+        timeout: 10000,
+      });
+
+      socket.on('connect_error', () => {
+        // Silently handle socket connection error
+      });
 
       socket.on('cart:init', (data) => {
         if (data.cart) setCart(data.cart);
@@ -111,11 +128,14 @@ export default function App() {
         triggerToast(`💬 WhatsApp message received from ${waMsg.senderName}`);
       });
     } catch (e) {
-      console.warn('Socket.io client connection error:', e);
+      // Safe fallback
     }
 
     return () => {
-      if (socket) socket.disconnect();
+      if (socket) {
+        socket.off();
+        socket.disconnect();
+      }
     };
   }, []);
 
@@ -125,7 +145,7 @@ export default function App() {
   };
 
   // Cart operations
-  const handleAddToCart = async (productId: string, memberId: string, note?: string) => {
+  const handleAddToCart = async (productId: string, memberId: string, note?: string, quantity: number = 1) => {
     const member = members.find((m) => m.id === memberId) || members[0];
 
     try {
@@ -134,7 +154,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId,
-          quantity: 1,
+          quantity: quantity || 1,
           memberId: member.id,
           memberName: member.name,
           memberLocation: member.location,
@@ -145,7 +165,7 @@ export default function App() {
       const data = await res.json();
       if (data.cart) {
         setCart(data.cart);
-        triggerToast(`Added item for ${member.name}`);
+        triggerToast(`Added ${quantity > 1 ? `${quantity}x ` : ''}item for ${member.name}`);
       }
     } catch (err) {
       console.error('Add to cart error:', err);
@@ -180,11 +200,11 @@ export default function App() {
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-[#f4f5f7] text-stone-900 font-sans flex flex-col justify-between selection:bg-[#ffb81c] selection:text-black">
+    <div className="min-h-screen bg-[#f8fafc] text-stone-900 font-sans flex flex-col justify-between selection:bg-[#FFB81C] selection:text-[#002D62]">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-16 sm:bottom-4 right-4 z-50 bg-[#1a115e] text-[#ffb81c] px-4 py-3 rounded-2xl shadow-2xl border border-[#298bf5]/30 flex items-center gap-3 animate-fade-in max-w-sm text-xs font-bold">
-          <Bell className="w-4 h-4 text-[#ff4f38] flex-shrink-0 animate-bounce" />
+        <div className="fixed bottom-16 sm:bottom-4 right-4 z-50 bg-[#002D62] text-[#FFB81C] px-4 py-3 rounded-2xl shadow-2xl border border-[#004A99]/50 flex items-center gap-3 animate-fade-in max-w-sm text-xs font-bold">
+          <Bell className="w-4 h-4 text-[#D0021B] flex-shrink-0 animate-bounce" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -219,33 +239,33 @@ export default function App() {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => setActiveTab('home')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === 'home'
-                  ? 'bg-[#1a115e] text-white shadow-xs'
+                  ? 'bg-[#002D62] text-white shadow-xs'
                   : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
               }`}
             >
-              <Home className="w-4 h-4 text-[#ffb81c]" />
+              <Home className="w-4 h-4 text-[#FFB81C]" />
               <span>Home Catalog</span>
             </button>
 
             <button
               onClick={() => setActiveTab('discover')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === 'discover'
-                  ? 'bg-[#1a115e] text-white shadow-xs'
+                  ? 'bg-[#002D62] text-white shadow-xs'
                   : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
               }`}
             >
-              <Compass className="w-4 h-4 text-[#298bf5]" />
+              <Compass className="w-4 h-4 text-[#0082C8]" />
               <span>Discover</span>
             </button>
 
             <button
               onClick={() => setActiveTab('myshop')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === 'myshop'
-                  ? 'bg-[#1a115e] text-white shadow-xs'
+                  ? 'bg-[#002D62] text-white shadow-xs'
                   : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
               }`}
             >
@@ -255,9 +275,9 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('profile')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === 'profile'
-                  ? 'bg-[#1a115e] text-white shadow-xs'
+                  ? 'bg-[#002D62] text-white shadow-xs'
                   : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
               }`}
             >
@@ -267,26 +287,26 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('cart')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 relative whitespace-nowrap ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer ${
                 activeTab === 'cart'
-                  ? 'bg-[#1a115e] text-white shadow-xs'
+                  ? 'bg-[#002D62] text-white shadow-xs'
                   : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
               }`}
             >
-              <ShoppingCart className="w-4 h-4 text-[#ff4f38]" />
+              <ShoppingCart className="w-4 h-4 text-[#D0021B]" />
               <span>Family Cart ({totalCartCount})</span>
               {totalCartCount > 0 && (
-                <span className="w-2 h-2 rounded-full bg-[#ff4f38] animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-[#D0021B] animate-ping" />
               )}
             </button>
           </div>
 
           <button
             onClick={() => setShowDocs(true)}
-            className="text-xs font-bold text-[#1a115e] hover:underline flex items-center gap-1 whitespace-nowrap pl-2"
+            className="text-xs font-bold text-[#002D62] hover:underline flex items-center gap-1 whitespace-nowrap pl-2 cursor-pointer"
           >
             <span className="hidden sm:inline">Monorepo Guide</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#298bf5]" />
+            <ArrowRight className="w-3.5 h-3.5 text-[#0082C8]" />
           </button>
         </div>
 
@@ -382,29 +402,29 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="bg-[#100a3d] text-blue-200/90 border-t border-[#1a115e] py-6 px-4 text-xs mt-10 pb-24 sm:pb-6">
+      <footer className="bg-[#001D42] text-blue-200/90 border-t border-[#002D62] py-6 px-4 text-xs mt-10 pb-24 sm:pb-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div className="space-y-1">
             <div className="flex items-center justify-center md:justify-start gap-2 text-white font-black text-sm">
-              <span>Zikishop</span>
-              <span className="bg-[#ff4f38] text-white text-[9px] font-black px-1.5 py-0.2 rounded uppercase">asap!</span>
-              <span className="text-[#ffb81c] font-sans text-xs">• MERN Workspaces</span>
+              <span>PnP (TM Pick n Pay)</span>
+              <span className="bg-[#D0021B] text-white text-[9px] font-black px-1.5 py-0.2 rounded uppercase">Express</span>
+              <span className="text-[#FFB81C] font-sans text-xs">• Cross-Border Grocery</span>
             </div>
             <p className="text-[11px] text-stone-300/80">
-              Cross-border collaborative grocery shopping engine for South Africa (SA) and Zimbabwe (ZIM). Powered by Socket.io, Gemini Voice & WhatsApp API.
+              TM Pick n Pay cross-border collaborative grocery shopping engine for South Africa (SA) and Zimbabwe (ZIM). Powered by Socket.io, Gemini Voice & WhatsApp API.
             </p>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] font-bold text-[#ffb81c]">
-            <button onClick={() => setShowDocs(true)} className="hover:underline">
+          <div className="flex items-center gap-4 text-[11px] font-bold text-[#FFB81C]">
+            <button onClick={() => setShowDocs(true)} className="hover:underline cursor-pointer">
               Monorepo Guide
             </button>
             <span>•</span>
-            <button onClick={() => setShowVoiceAI(true)} className="hover:underline">
+            <button onClick={() => setShowVoiceAI(true)} className="hover:underline cursor-pointer">
               Voice AI Assistant
             </button>
             <span>•</span>
-            <button onClick={() => setShowWhatsAppSim(true)} className="hover:underline">
+            <button onClick={() => setShowWhatsAppSim(true)} className="hover:underline cursor-pointer">
               WhatsApp Fallback
             </button>
           </div>
